@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Python Statistics | Beginner Guide</title><style>
+:root{--ink:#172b3a;--muted:#597080;--accent:#16806a;--bg:#f4f8fa;--line:#dce6e9}*{box-sizing:border-box}body{margin:0;font:16px/1.65 system-ui,Arial;color:var(--ink);background:var(--bg)}header{background:#123b4a;color:white;padding:46px max(24px,calc((100vw - 1040px)/2))}header h1{font-size:clamp(2rem,4vw,3rem);margin:0}header p{max-width:700px;color:#d8ebef}nav{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}nav a{color:white;text-decoration:none;border:1px solid #7da4ad;border-radius:20px;padding:5px 13px;font-size:14px}main{max-width:1040px;margin:32px auto;padding:0 20px}section{background:white;padding:28px;margin-bottom:24px;border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 16px #1b3b4b0a}h2{margin-top:0;color:#116b5a}h3{margin-bottom:6px}p{margin-top:7px}code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}pre{background:#142b37;color:#e9f8f6;padding:16px;overflow-x:auto;border-radius:9px;font-size:14px;line-height:1.55}.exercise{background:#edf8f3;border-left:4px solid var(--accent);padding:14px 18px;border-radius:6px;margin:18px 0}.exercise strong{color:#08614f}details{border:1px solid var(--line);border-radius:8px;margin:10px 0;padding:10px 14px}summary{cursor:pointer;font-weight:600}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:9px;border:1px solid var(--line);text-align:left}th{background:#e8f2f3}.tablewrap{overflow-x:auto}.tag{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}.note{color:var(--muted)}a{color:#096f66}footer{text-align:center;padding:28px;color:var(--muted)}button{background:#16806a;color:white;border:0;border-radius:6px;padding:5px 10px;cursor:pointer;float:right;font-size:12px}button:hover{background:#0e594b}@media(max-width:600px){section{padding:20px}header{padding:30px 20px}}
+</style></head><body><header><div class="tag" style="color:#a6e7d4">Hands-on short course</div><h1>Introduction to Probability & Statistics with Python</h1><p>Understand the ideas, then try tiny Python exercises. Each example is designed for a Python terminal or a short script.</p><nav><a href="#start">Start</a><a href="#data">Data</a><a href="#manipulation">Manipulation</a><a href="#eda">EDA</a><a href="#categorical">Categorical & Probability</a><a href="#numerical">Numerical & Regression</a><a href="#challenge">Coffee Truck Challenge</a></nav></header><main>
+<section id="start"><div class="tag">00 · Setup</div><h2>Getting started</h2><p>Statistics is about <b>making sense of numbers</b>: organising data, describing variation, and making informed decisions when outcomes are uncertain.</p><p>Install Python 3, then run these commands in your system terminal (not inside the <code>&gt;&gt;&gt;</code> Python prompt):</p><pre>python -m pip install pandas matplotlib numpy</pre><p>Start Python with <code>python</code> (or <code>python3</code>). Type the examples below at the <code>&gt;&gt;&gt;</code> prompt. For plots, run the examples on a computer with a graphical display.</p><div class="exercise"><strong>Try it:</strong> Calculate the average of three observations.</div><pre>scores = [60, 70, 80]
+print(sum(scores) / len(scores))</pre><details><summary>Expected result</summary><p><code>70.0</code></p></details></section>
+<section id="data"><div class="tag">01 · Foundations</div><h2>Population, sample and data</h2><p>A <b>population</b> is the complete collection we want to learn about. A <b>sample</b> is the part we actually observe. A <b>variable</b> is a characteristic that can vary between observations, such as province, location or profit.</p><p><b>Categorical</b> variables describe groups or labels (e.g. Location). <b>Numerical</b> variables represent quantities (e.g. Sales or Profit). Data is generated through purchases, social media, streaming services, reviews and fitness trackers.</p><h3>How a dataset is structured</h3><div class="tablewrap"><table><tr><th>Location</th><th>Music</th><th>Sales</th><th>Profit</th></tr><tr><td>Zoo</td><td>Jazz</td><td>40</td><td>120</td></tr><tr><td>Park</td><td>Pop</td><td>25</td><td>-20</td></tr><tr><td>Zoo</td><td>Rock</td><td>55</td><td>210</td></tr></table></div><p class="note">Each row is an observation. Each column is a variable. A cell contains one value for one observation.</p><div class="exercise"><strong>Try it:</strong> Count the observations and extract one variable.</div><pre>data = {"Location": ["Zoo", "Park", "Zoo"],
+        "Sales": [40, 25, 55]}
+print(len(data["Sales"]))
+print(data["Location"])</pre><details><summary>Expected result</summary><p><code>3</code> and <code>['Zoo', 'Park', 'Zoo']</code>.</p></details></section>
+<section id="manipulation"><div class="tag">02 · Data handling</div><h2>Data Manipulation</h2><p>Common operations include importing a CSV, selecting or removing columns, filtering rows, dropping duplicates, sorting observations and creating new variables.</p><p>Download <a href="CoffeeTruck.csv" download>the sample CoffeeTruck.csv</a> and place it in the directory where you launch Python.</p><pre>import pandas as pd
+df = pd.read_csv("CoffeeTruck.csv")
+print(df.shape)            # rows, columns
+print(df.columns.tolist()) # variable names
+print(df["Location"].unique())</pre><h3>Select, filter and clean</h3><pre>print(df[["Location", "Profit"]].head())
+zoo = df[df["Location"] == "Zoo"]
+print(len(zoo))
+print(df.duplicated().sum())
+clean = df.drop_duplicates()
+clean = clean.drop(columns=["Weather"])
+clean = clean.sort_values(["Profit", "Music"],
+                          ascending=[True, False])</pre><h3>Create a variable</h3><pre>clean["Indicator"] = clean["Profit"].apply(
+    lambda p: "Loss" if p < 0 else
+              "Profit" if p > 0 else "Break-even")
+print(clean[["Profit", "Indicator"]].head())</pre><div class="exercise"><strong>Try it:</strong> How many distinct locations are there? How many rows remain after removing duplicates?</div><details><summary>Show solution</summary><pre>print(df["Location"].nunique())
+print(len(df.drop_duplicates()))</pre></details></section>
+<section id="eda"><div class="tag">03 · Explore</div><h2>Exploratory Data Analysis (EDA)</h2><p>EDA summarises and visualises the data you have. It helps spot patterns, variation, missing values and unusual observations. <b>Describing a sample is not the same as proving a claim about the entire population.</b></p><pre>print(clean.head())
+print(clean.info())
+print(clean.describe())
+print(clean.isna().sum())</pre><div class="exercise"><strong>Try it:</strong> Find the highest and lowest profit in the sample.</div><pre>print(clean["Profit"].max())
+print(clean["Profit"].min())</pre><details><summary>Think about it</summary><p>Would the highest daily profit alone tell you how profitable the coffee truck usually is? Why not?</p></details></section>
+<section id="categorical"><div class="tag">04 · Categories and chance</div><h2>Categorical Data & Probability</h2><p>A <b>frequency table</b> counts occurrences of each category. A <b>relative frequency</b> divides each count by the total. Bar charts compare category counts; pie charts display parts of a whole.</p><pre>print(clean["Location"].value_counts())
+print(clean["Location"].value_counts(normalize=True))</pre><p>For equally likely outcomes, <b>P(event) = favourable outcomes / all possible outcomes</b>. For observed data, the proportion is an <i>empirical probability estimate</i>, not a guarantee about future days.</p><pre>p_zoo = (clean["Location"] == "Zoo").mean()
+print(round(p_zoo, 2))</pre><h3>Bar chart</h3><pre>import matplotlib.pyplot as plt
+clean["Music"].value_counts().plot(kind="bar")
+plt.title("Music played")
+plt.ylabel("Number of days")
+plt.tight_layout()
+plt.show()</pre><h3>Two categorical variables</h3><pre>print(pd.crosstab(clean["Music"],
+                  clean["Indicator"]))</pre><div class="exercise"><strong>Try it:</strong> Estimate the probability of a loss on a randomly selected observed day.</div><details><summary>Show solution</summary><pre>print((clean["Profit"] < 0).mean())</pre></details></section>
+<section id="numerical"><div class="tag">05 · Numbers and relationships</div><h2>Numerical Data & Regression</h2><p>The <b>mean</b> is the arithmetic average; the <b>median</b> is the middle value. The <b>five-number summary</b> is minimum, Q1, median (Q2), Q3 and maximum. <b>IQR = Q3 − Q1</b>. Standard deviation describes spread around the mean.</p><pre>profits = clean["Profit"]
+print("Mean:", profits.mean())
+print("Median:", profits.median())
+print("SD:", profits.std())
+print(profits.quantile([0, .25, .5, .75, 1]))
+print("IQR:", profits.quantile(.75) - profits.quantile(.25))</pre><h3>Histogram and boxplot</h3><pre>profits.plot(kind="hist", bins=6)
+plt.xlabel("Daily profit")
+plt.title("Distribution of profit")
+plt.show()</pre><pre>clean.boxplot(column="Profit", by="Location")
+plt.title("Profit by location")
+plt.suptitle("")
+plt.ylabel("Profit")
+plt.show()</pre><h3>Correlation and linear regression</h3><p>Correlation measures the strength and direction of a <b>linear association</b> (between −1 and 1). Linear regression fits a line <b>y = mx + b</b> to predict one numerical variable from another. Association does not prove causation.</p><pre>import numpy as np
+x = clean["Sales"].to_numpy()
+y = clean["Profit"].to_numpy()
+m, b = np.polyfit(x, y, 1)
+print("Slope:", round(m, 2))
+print("Correlation:", round(clean["Sales"].corr(clean["Profit"]), 2))
+print("Predicted profit for 50 sales:", round(m*50+b, 2))</pre><pre>plt.scatter(x, y)
+plt.plot(x, m*x+b, color="orange")
+plt.xlabel("Sales")
+plt.ylabel("Profit")
+plt.show()</pre><div class="exercise"><strong>Try it:</strong> Compare the mean and median profit. Which changes more if one day has a very large profit?</div><details><summary>Answer</summary><p>The mean is usually more sensitive to an extreme value than the median.</p></details></section>
+<section id="challenge"><div class="tag">06 · Practice</div><h2>Coffee Truck Challenge</h2><p>Use the downloadable <a href="CoffeeTruck.csv" download>CoffeeTruck.csv</a>. It is a <b>synthetic teaching dataset</b>, not the original CoffeeTruck.csv from the notes. Run <code>import pandas as pd</code> and <code>df = pd.read_csv("CoffeeTruck.csv")</code> first.</p><h3>Part A · Data manipulation</h3><ol><li>How many rows and columns are there?</li><li>List all variables.</li><li>Find the unique locations and their count.</li><li>Keep only sales at the Zoo.</li><li>Count and remove duplicate rows. How many remain?</li><li>Sort by profit ascending, then music descending.</li><li>Add an Indicator column for Loss, Profit or Break-even.</li></ol><h3>Part B · EDA</h3><ol><li>Which location appears most often?</li><li>Create a frequency table of Music versus Indicator.</li><li>Draw a histogram of profits.</li><li>Draw a bar chart of Music.</li><li>Draw boxplots of profit by location. Which appears to have the most outliers?</li><li>Find mean, median and standard deviation of profit by location.</li><li><b>Bonus:</b> Find the mean sales at the Zoo on profitable days.</li></ol><details><summary>Reveal a compact solution script</summary><pre>import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("CoffeeTruck.csv")
+print(df.shape, df.columns.tolist())
+print(df["Location"].unique(), df["Location"].nunique())
+print(df[df["Location"] == "Zoo"])
+print("Duplicates:", df.duplicated().sum())
+df = df.drop_duplicates()
+print("Rows left:", len(df))
+df = df.sort_values(["Profit", "Music"],
+                    ascending=[True, False]).copy()
+df["Indicator"] = df["Profit"].apply(
+    lambda x: "Loss" if x < 0 else
+              "Profit" if x > 0 else "Break-even")
+print(df["Location"].value_counts())
+print(pd.crosstab(df["Music"], df["Indicator"]))
+print(df.groupby("Location")["Profit"].agg(
+    ["count", "mean", "median", "std", "min", "max"]))
+print("Zoo profitable-day mean sales:",
+      df.loc[(df["Location"] == "Zoo") &
+             (df["Profit"] > 0), "Sales"].mean())
+df["Profit"].hist()
+plt.xlabel("Profit")
+plt.show()
+df["Music"].value_counts().plot.bar()
+plt.ylabel("Days")
+plt.show()
+df.boxplot(column="Profit", by="Location")
+plt.suptitle("")
+plt.show()</pre></details><p class="note">Note: For small samples, boxplot outliers depend on the quartile method. A point outside 1.5 × IQR is a common convention, not automatically an error.</p></section>
+<section><h2>Publish on GitHub Pages</h2><p>Upload <code>index.html</code> and <code>CoffeeTruck.csv</code> to the root of a GitHub repository. Under <b>Settings → Pages</b>, choose <b>Deploy from a branch</b>, select <b>main</b> and <b>/(root)</b>, then save. GitHub will provide a public URL once deployment finishes.</p><p class="note">No server, API key, or JavaScript framework required. The Python examples run on the student's own computer, not in the website.</p></section></main><footer>Python Statistics · Beginner-friendly teaching resource</footer><script>document.querySelectorAll('pre').forEach(p=>{const b=document.createElement('button');b.textContent='Copy';b.onclick=()=>navigator.clipboard.writeText(p.textContent.replace(/^Copy/,''));p.prepend(b)})</script></body></html>
